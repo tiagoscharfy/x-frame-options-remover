@@ -1,1 +1,1 @@
-# x-frame-options-remover
+# X-FRAME-OPTIONS Remover
