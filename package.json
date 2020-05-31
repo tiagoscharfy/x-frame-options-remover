@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/HelloWar75/x-frame-options-remover/issues"
   },
-  "homepage": "https://github.com/HelloWar75/x-frame-options-remover#readme"
+  "homepage": "https://github.com/HelloWar75/x-frame-options-remover#readme",
+  "devDependencies": {
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^3.9.3"
+  }
 }
