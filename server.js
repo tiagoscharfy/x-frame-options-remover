@@ -9,15 +9,18 @@ var axios_1 = __importDefault(require("axios"));
 var mime_1 = __importDefault(require("mime"));
 var axios_cache_adapter_1 = require("axios-cache-adapter");
 var cheerio_1 = __importDefault(require("cheerio"));
+var express_useragent_1 = __importDefault(require("express-useragent"));
 var cache = axios_cache_adapter_1.setupCache({
     maxAge: 15 * 60 * 1000
 });
 var axiosReq = axios_1.default.create({
     adapter: cache.adapter
 });
-var script_injection = 'teste';
+var script_injection = "SCRIPT AQUI";
+var redir_useragent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36";
 var app = express_1.default();
 app.use(morgan_1.default('tiny'));
+app.use(express_useragent_1.default.express());
 var regex = /\s+(href|src)=['"](.*?)['"]/g;
 function getMimeType(url) {
     if (url.indexOf("?") !== -1) {
@@ -29,8 +32,11 @@ function getMimeType(url) {
 }
 ;
 app.get("/", function (request, response) {
-    var url = request.query.url;
-    console.log("URL: " + url);
+    var _a;
+    var url = (request.query || "").url;
+    if (((_a = request.useragent) === null || _a === void 0 ? void 0 : _a.source.toString()) == redir_useragent.toString()) {
+        return response.redirect(url === null || url === void 0 ? void 0 : url.toString());
+    }
     if (!url) {
         response.type('text/html');
         return response.end("You need to specify <code>url</code> query parameter");

@@ -4,6 +4,7 @@ import axios from "axios";
 import mime from "mime";
 import { setupCache } from "axios-cache-adapter";
 import cheerio from "cheerio";
+import useragent from "express-useragent";
 
 const cache = setupCache({
     maxAge: 15 * 60 * 1000
@@ -13,10 +14,13 @@ const axiosReq = axios.create({
     adapter: cache.adapter
 });
 
-const script_injection = 'teste';
+const script_injection = "SCRIPT AQUI";
+const redir_useragent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36";
 
 const app = express();
 app.use(morgan('tiny'));
+app.use(useragent.express());
+
 
 const regex = /\s+(href|src)=['"](.*?)['"]/g;
 
@@ -30,9 +34,11 @@ function getMimeType( url: string ) {
 };
 
 app.get("/", (request, response) => {
-    const { url } = request.query;
+    const { url } = request.query || "";
 
-    console.log("URL: " + url);
+    if ( request.useragent?.source.toString() == redir_useragent.toString() ){
+        return response.redirect(url?.toString()!);
+    }
 
     if(!url) {
         response.type('text/html');
