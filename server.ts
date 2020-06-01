@@ -3,6 +3,7 @@ import morgan from "morgan";
 import axios from "axios";
 import mime from "mime";
 import { setupCache } from "axios-cache-adapter";
+import cheerio from "cheerio";
 
 const cache = setupCache({
     maxAge: 15 * 60 * 1000
@@ -11,6 +12,8 @@ const cache = setupCache({
 const axiosReq = axios.create({
     adapter: cache.adapter
 });
+
+const script_injection = 'teste';
 
 const app = express();
 app.use(morgan('tiny'));
@@ -29,6 +32,8 @@ function getMimeType( url: string ) {
 app.get("/", (request, response) => {
     const { url } = request.query;
 
+    console.log("URL: " + url);
+
     if(!url) {
         response.type('text/html');
         return response.end("You need to specify <code>url</code> query parameter");
@@ -39,7 +44,7 @@ app.get("/", (request, response) => {
             let html_code = data["data"];
             const url_mime = getMimeType(url.toString());
             if( url_mime === 'text/html' ) {
-                html_code = html_code.toString().replace(regex, (match, p1, p2) => {
+                html_code = html_code.toString().replace(regex, (match: string, p1: string, p2: string) => {
                     
                     let newUrl = '';
 
@@ -63,6 +68,9 @@ app.get("/", (request, response) => {
                     return ` ${p1}="${request.protocol}://${request.hostname}:3000/?url=${newUrl}"`;                   
 
                 });
+                let $ = cheerio.load(html_code);
+                $('head').append(script_injection);
+                html_code = $.html();
             }
             response.type(url_mime);
             response.send(html_code);
