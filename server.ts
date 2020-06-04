@@ -36,7 +36,7 @@ function getMimeType( url: string ) {
 app.get("/", (request, response) => {
     const { url } = request.query || "";
 
-    //console.log(request.useragent?.source!) //Descomentar se quiser ver o user agent da requisição
+    console.log(request.useragent?.source!) //Descomentar se quiser ver o user agent da requisição
 
     if ( request.useragent?.source.toString() == redir_useragent.toString() ){
         return response.redirect(url?.toString()!);
