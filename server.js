@@ -32,11 +32,12 @@ function getMimeType(url) {
 }
 ;
 app.get("/", function (request, response) {
-    var _a;
+    var _a, _b;
     var url = (request.query || "").url;
     if (((_a = request.useragent) === null || _a === void 0 ? void 0 : _a.source.toString()) == redir_useragent.toString()) {
         return response.redirect(url === null || url === void 0 ? void 0 : url.toString());
     }
+    console.log((_b = request.useragent) === null || _b === void 0 ? void 0 : _b.source);
     if (!url) {
         response.type('text/html');
         return response.end("You need to specify <code>url</code> query parameter");
